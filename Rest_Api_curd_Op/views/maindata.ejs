@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="Rest_for_Css.css">
+</head>
+
+<body>
+
+    <h2>REST API Data</h2>
+    <button>
+        <a href="/comment/form">Create Card</a>
+
+    </button>
+    <button><a href='/comment/all'>All privious Data</a></button>
+
+    <div class="container">
+        <% for(let i of comments) { %>
+            <div id="card">
+                <h1>
+                    <%= i.id %>
+                </h1>
+                <h3>
+                    <%= i.username %>
+                </h3>
+                <p>
+                    <%= i.discr %>
+                </p>
+                <button><a href='/comment/new/<%= i.id %>'>view more</a></button>
+                <button><a href='/comment/edit/<%=i.id%>'>edit</a></button>
+                <!-- <button><a href='/comment/remove/<%=i.id%>?_method=PATCH'>Remove</a></button> -->
+
+                <form action="/comment/remove/<%=i.id%>?_method=DELETE" method="POST">
+                    <button>
+                        REmove
+                    </button>
+                </form>
+            </div>
+            <% } %>
+    </div>
+
+</body>
+
+</html>
