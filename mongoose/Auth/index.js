@@ -24,7 +24,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/DataDase").then(()=>{
 app.set("view engine", "ejs")
 
 app.get("/",(req,res)=>{
-    res.render("maindata")
+    res.render("Home")
 })
 
 
