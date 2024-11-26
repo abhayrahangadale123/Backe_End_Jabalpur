@@ -1,6 +1,9 @@
 let express = require("express");
 let app  = express()
 //  let bcrypt =   require("bcrypt")
+let cors = require("cors")
+app.use(cors())
+let jwt = require("jsonwebtoken")
 let mongoose = require("mongoose");
 const User = require("./Model/user");
 
@@ -8,7 +11,7 @@ const User = require("./Model/user");
 app.use(express.json())
 
 // from ke liye midle were
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
 
  
  
@@ -24,21 +27,28 @@ mongoose.connect("mongodb://127.0.0.1:27017/DataDase").then(()=>{
 app.set("view engine", "ejs")
 
 app.get("/",(req,res)=>{
+    console.log("rrrrrrrrrrrrrrrrrrrrrrrrrrr");
+    
     res.render("Home")
 })
 
 
-app.get("/create",(req,res)=>{
-    res.render("singup")
-})
-app.get("/login",(req,res)=>{
-    res.render("login")
-})
+// app.get("/create",(req,res)=>{
+//     res.render("singup")
+// })
+// app.get("/login",(req,res)=>{
+//     res.render("login")
+// })
+
+
+ 
+
+ 
 
 // sing up ..............................................................................................................
 app.post("/create",async (req,res)=>{
      let user = req.body;
-     console.log(user," create kr rhaaaaaa   hiiiiiiiiiiiiiiiiiiiiiii");
+     console.log(user," create kr rhaaaaaa   hiiiiiiiiiiiiiiiiiiiiiiiii");
      
     let data = await User.findOne({email:user.email})
 
@@ -55,7 +65,8 @@ app.post("/create",async (req,res)=>{
                 lastName:user.lastName,
                 email:user.email,
                 // password:updatePass
-                password:user.password
+                password:user.password,
+                role:user.role||"user"
             }
         )
         dbUser.save();
@@ -73,6 +84,9 @@ app.post("/login",async(req,res)=>{
     if(data){
         let vaildData = await loginData.password===data.password
         if(vaildData){
+            let token = jwt.sign({email:data.email,role:data.role},"rrtfjfuyftyrfhftydfyddgrdytdfyty");
+            console.log(token,"tokennnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+            
             res.send("loginnnnnnnnnnnn")
         }
         else{
@@ -85,6 +99,32 @@ app.post("/login",async(req,res)=>{
 })
 
 
+function checkRole(role){
+    return(req,res,next)=>{
+        let token = req.headers.authorization;
+        if(!token){
+            return res.send("unauthorization user");
+        }
+        else{
+           let decodeToken = jwt.verify(token,"rrtfjfuyftyrfhftydfyddgrdytdfyty");
+           if(decodeToken.role!=role){
+            return res.send("acesss denideeeee")
+           }
+           else{
+            next();
+           }
+        }
+    }
+}
+
+// tokan create and fillter data Admin ka ya user ka haiiiiiii
+
+app.get("/admin",checkRole("admin"),(req,res)=>{
+    res.send("admin accesss onlyyyy admin")
+})
+app.get("/user",checkRole("user"),(req,res)=>{
+    res.send("user access onlyyyyy user")
+})
 
 app.listen(7000,(req,res)=>{
     console.log("server readyyyyy 7000");
