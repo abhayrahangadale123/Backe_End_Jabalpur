@@ -1,0 +1,41 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.Navbar{
+    color: #fff;
+    padding: 20px;
+    display: flex;
+   justify-content: space-between;
+ 
+   background-color:#57a787;
+  
+}
+.Home{
+    display: flex;
+     gap:30px;
+     text-decoration: none;
+
+}
+.Home p{
+    
+    color: white;
+    font-size: large;
+
+}
+.apps{
+    color: #fff;
+    display: flex;
+    gap:20px;
+    
+}
+.apps button{
+    cursor: pointer;
+    padding: 5px 15px;
+    border: none;
+    border-radius:5px;
+    background-color:black;
+    color: white;
+}

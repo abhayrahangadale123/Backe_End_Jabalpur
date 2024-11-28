@@ -1,6 +1,6 @@
 let express = require("express");
 let app  = express()
-//  let bcrypt =   require("bcrypt")
+ let bcrypt =   require("bcryptjs")
 let cors = require("cors")
 app.use(cors())
 let jwt = require("jsonwebtoken")
@@ -57,15 +57,15 @@ app.post("/create",async (req,res)=>{
         res.send("user jindaa haiii alredy aceeeeeeeeeee")
     }
     else{
-        // let updatePass = await bcrypt.hash(user.password,10);
+        let updatePass = await bcrypt.hash(user.password,10);
         let dbUser = new User(
             {
 
                 firstName:user.firstName,
                 lastName:user.lastName,
                 email:user.email,
-                // password:updatePass
-                password:user.password,
+                password:updatePass,
+                // password:user.password,
                 role:user.role||"user"
             }
         )
@@ -82,12 +82,15 @@ app.post("/login",async(req,res)=>{
     let loginData = req.body
     let data = await User.findOne({email:loginData.email})
     if(data){
-        let vaildData = await loginData.password===data.password
+        let vaildData = await bcrypt.compare(loginData.password , data.password)  
         if(vaildData){
             let token = jwt.sign({email:data.email,role:data.role},"rrtfjfuyftyrfhftydfyddgrdytdfyty");
             console.log(token,"tokennnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+
+
             
-            res.send("loginnnnnnnnnnnn")
+            // res.send(`token=${token} loginnnnn=successfully`) // this is right.......
+            res.send({token});
         }
         else{
             res.send("Invalid Passsssssssssssss")
@@ -107,6 +110,8 @@ function checkRole(role){
         }
         else{
            let decodeToken = jwt.verify(token,"rrtfjfuyftyrfhftydfyddgrdytdfyty");
+       
+           
            if(decodeToken.role!=role){
             return res.send("acesss denideeeee")
            }
